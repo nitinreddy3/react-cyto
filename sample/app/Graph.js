@@ -5,7 +5,7 @@ import './style.css'
 import { graphEdges } from './data';
 import $ from 'jquery';
 import qtip from 'cytoscape-qtip';
-
+import Tippy from 'tippy.js'
 
 
 class Graph extends Component {
@@ -21,9 +21,54 @@ class Graph extends Component {
 		this.cy = cy;
 		// console.log('CY', cy.nodes());
 		cy.on('tap', 'node', function (evt) {
-			// var node = evt.target;
-			console.log('#cy ', $('#cy'));
-			
+			var node = evt.target;
+			console.log('node ', node.id());
+			node.popper({
+				content: () => {
+				  let div = document.createElement('div');
+
+				  div.innerHTML = 'Popper content';
+
+				  document.body.appendChild(div);
+
+				  return div;
+				},
+				// renderedPosition: () => ({ x: 200, y: 300 }),
+				popper: {}, // my popper options here,
+				position: {
+							  my: 'top center',
+							  at: 'bottom center'
+							},
+							show: {
+							  event: 'mouseover'
+							},
+							hide: {
+							  event: 'mouseout'
+							},
+							style: {
+							  classes: 'qtip-bootstrap',
+							  tip: {
+								width: 16,
+								height: 8
+							  }
+							}
+			  });
+			let ref = node.popperRef(); // used only for positioning
+
+			console.log('ref', ref);
+			// using tippy ^4.0.0
+			// let tippy = new Tippy(ref, { // tippy options:
+			// 	content: () => {
+			// 		let content = document.createElement('div');
+
+			// 		content.innerHTML = 'Tippy content';
+
+			// 		return content;
+			// 	},
+			// 	trigger: 'manual' // probably want manual mode
+			// });
+
+			// node.on('tap', () => tippy.show());
 		});
 	}
 
@@ -34,19 +79,19 @@ class Graph extends Component {
 				<Row>
 					<Col sm="12">
 						<ReactCytoscape containerID="cy"
-							style = {[{
+							style={[{
 								selector: 'edge',
 								css: {
-								'content': 'data(synName)' || 'data(name)',
-								'curve-style': 'bezier',
-								'target-arrow-shape': 'triangle'
+									'content': 'data(synName)' || 'data(name)',
+									'curve-style': 'bezier',
+									'target-arrow-shape': 'triangle'
 								}
 							},
 							{
 								selector: 'node',
 								css: {
-								'content': 'data(synName)' || 'data(name)',
-								'background-color': 'data(color)'
+									'content': 'data(synName)' || 'data(name)',
+									'background-color': 'data(color)'
 								}
 							}]}
 							elements={this.getElements()}
